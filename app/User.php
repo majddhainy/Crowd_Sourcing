@@ -42,13 +42,9 @@ class User extends Authenticatable
     public function workshops(){
         return $this->hasMany(Workshop::class);
     }
-
-    public function card(){
-        return $this->hasOne(Card::class);
-    }
-
-    public function voting(){
-        return $this->hasOne(Voting::class);
+    
+    public function votings(){
+            return $this->belongsToMany('App\Cards','votings');
     }
 
     

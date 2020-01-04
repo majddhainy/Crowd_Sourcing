@@ -1,9 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.editedapp')
 
 
 @section('content')
-<div align="center" >
-
 
 <h2  class="my-5"> 25/10 Crowd Sourcing </h2>
 

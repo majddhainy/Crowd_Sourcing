@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = [
+        'title', 'body', 'score','workshop_id','user_id'
+    ];
 
     public function workshops(){
         return $this->hasMany(Workshop::class);

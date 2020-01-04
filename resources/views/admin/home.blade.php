@@ -1,4 +1,6 @@
 @extends('layouts.app')
+@section('sidebar')
+@endsection
 
 @section('content')
 <?php $roles = ['Admin' , 'Monitor' , 'Participant'] ?>
@@ -22,6 +24,7 @@
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th> Role </th> 
+                                                <th>Name</th>
                                                 <th scope="col">Email</th>
                                                 <th></th>
                                             </tr>
@@ -33,9 +36,10 @@
                                                 <tr> 
                                                     <th> {{ $i  }} </th>
                                                     <td>   {{ $roles[$user->role] }}</td>
-                                                    {{-- <td> <img src="{{ asset( "storage/" . $user->image_path) }}" width="130" height="70"/> </td>  --}}
+                                                    <td>{{$user->name}}</td>
+                        
                                                     <td> {{$user->email }} </td>
-                                                    {{-- in order to keep buttons in the same line use white-space: nowrap --}}
+                             
                                                     <td style='white-space: nowrap'>
                                                         @if ($user->role != 0)
                                                             <form method="post" action="{{ route('updateuser', $user->id)  }}" >

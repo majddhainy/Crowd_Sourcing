@@ -66,6 +66,8 @@ class Kernel extends HttpKernel
         'admin' => VerifyIsAdmin::class,
         'monitor' => VerifyIsMonitor::class,
         'participant' => VerifyIsParticipant::class,
+        'monitorplus' => Middleware\MonitorHasWorkshop::class,
+        'participantplus' =>  Middleware\ParticipantHasWorkshop::class
 
     ];
 

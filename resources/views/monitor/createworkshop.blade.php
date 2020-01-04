@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 {{-- Note here we can use the same file for editing / creating categories to reduce number of files --}}
 
 @section('content')
@@ -24,13 +23,13 @@
                     <form method="post" action="{{route('storeworkshop')}}">
                             @csrf
                             <div class="form-group">
-                                <input name="title" placeholder="Title" type="text" class="form-control">
+                                <input name="title" placeholder="Title" type="text" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <textarea cols="8" rows="8" name="body" placeholder="Problem"  class="form-control"></textarea>
+                                <textarea cols="8" rows="8" name="body" placeholder="Problem"  class="form-control" required></textarea>
                             </div>
                             <div class="form-group">
-                                <input name="participants" placeholder="Participants Number" type="text" class="form-control">
+                                <input name="participants" placeholder="Participants Number" type="text" class="form-control" required>
                             </div>
 
                             <button type="submit"  class="btn btn-primary btn-md float-right" >Create Workshop</button>

@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+
 {{-- Note here we can use the same file for editing / creating categories to reduce number of files --}}
 
 @section('content')
@@ -21,7 +22,7 @@
                     <div class="card-body">
                         {{-- in action u can just say the name of the route  --}}
                         {{-- also the name differs if editing or creating --}}
-                        <form method="post" action="">
+                    <form method="post" action="{{route('applytoworkshop')}}">
                             @csrf
                             <div class="form-group">
                                 <input name="key" placeholder="Workshop Key" type="text" class="form-control">
