@@ -11,13 +11,20 @@
             </div>
         </div>
     </div>
-@if (!$workshop->can_submit)
+<?php 
+use App\User;
+$monitor = User::find($workshop->user_id); ?>
+@if (!Auth::user()->can_submit || !$monitor->can_submit)
 <div class="alert my-5 alert-danger">
-    <h2>Please wait until workshop starts !</h2>
+    @if($monitor->can_submit)
+    <h2> you have already submitted your card !</h2>
+    @else 
+    <h2> Please wait the workshop to start</h2>
+    @endif
 </div>
 @else
-<div class="card" style="margin-left:15%;margin-right:15%">
-    <div class="card-header">Submit Your Card</div>
+<div class="card my-4" style="margin-left:15%;margin-right:15%">
+    <div class="card-header"> <h4> Submit Your Card </h4> </div>
         <div class="card-body">
         <form method="post" action="{{route('storecard',$workshop->id)}}">
                 @csrf

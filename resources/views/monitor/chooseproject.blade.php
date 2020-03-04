@@ -34,7 +34,7 @@
                                         <th> {{ $i  }} </th>
                                         <td>  {{ $card->title }}  </td>
                                         <td>{{ $card->score }}  </td>
-                                        <td><input type="checkbox" name="projects[]" value="{{$card->id}}"> </td>
+                                        <td><input type="checkbox" name="projects[]"> </td>
                                     </tr>
                                     <?php $i++ ?>
                                 @endforeach

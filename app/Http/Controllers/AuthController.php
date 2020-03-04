@@ -26,19 +26,19 @@ class AuthController extends Controller
 
 
     public function store() {
-
-
-            $user = request()->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string',
-            'role' => 'integer|required|min:1|max:2'
-             ]);
-
-            $user['password'] = Hash::make($user['password']);
+        $user = request()->validate([
+        'name' => 'required|string',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|string',
+        'role' => 'integer|required|min:1|max:2'
+         ]);
+        $user['password'] = Hash::make($user['password']);
+        if(User::find(1)){
             $user['confirmed'] = User::find(1)->auto_confirm;
-
-            User::create($user);
+        }
+        else 
+            $user['confirmed'] = 0;
+        User::create($user);
 
         return redirect('/login');
     }

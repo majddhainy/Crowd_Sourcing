@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Workshop;
 use App\Card;
 use App\Voting;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 
 class ParticipantController extends Controller
@@ -23,7 +24,7 @@ class ParticipantController extends Controller
             return redirect(route('joinworkshop'));
         }
         if($workshop->locked==1){
-            session()->flash('message','Cannot Join Workshop');
+            session()->flash('message','Cannot Join Workshop Door is closed Contact Monitor');
             return redirect(route('joinworkshop'));
         }
         if($workshop->participated==$workshop->participants){
@@ -46,20 +47,22 @@ class ParticipantController extends Controller
             'title' => 'string|required|max:50',
             'body' => 'required|max:500',
         ]);
-        $card=Auth::user()->card($workshop);
+        $card=Card::where([ ['workshop_id', $workshop->id ],['user_id', Auth::user()->id]])->first();
         $card->title=request('title');
         $card->body=request('body');
         $card->save();
         $workshop->voted++;
-        if($workshop->voted==$workshop->participated)
-            $workshop->can_vote=0;
         $workshop->save();
+        Auth::user()->can_submit = 0;
+        Auth::user()->save();
         return redirect(route('card' , $workshop->id));
     }
     public function card(Workshop $workshop){ // added
         $votedCards=Voting::where([['user_id',Auth::user()->id],['workshop_id',$workshop->id]])->get();
-        $voteCard=$votedCards->last();
+        if($voteCard=$votedCards->last())
         $card=Card::where('id',$voteCard->card_id)->first(); // this is the card to be voted
+        else
+        $card =null;
         return view('participant.card',[
             'workshop'=>$workshop,
             'card'=>$card
@@ -70,6 +73,7 @@ class ParticipantController extends Controller
             "score"=>'required|integer|min:1|max:5'
         ]);
         $workshop->voted++;
+        $workshop->save();
         Auth::user()->can_vote=0;
         Auth::user()->save();
         $votedCards=Voting::where([['user_id',Auth::user()->id],['workshop_id',$workshop->id]])->get();
@@ -77,15 +81,19 @@ class ParticipantController extends Controller
         $card=Card::where('id',$voteCard->card_id)->first();
         $card->score+=request('score');
         $card->save();
-        if($workshop->voted==$workshop->participated)
-            $workshop->can_vote=0;
-        $workshop->save();
-        if($votedCards->count()==5){
-            $workshop->finished=1;
-            return redirect(route('chooseproject',$workshop->id));
+        if($workshop->voted==$workshop->participated){
+            $monitor = User::find($workshop->user_id);
+            $monitor->can_vote = 0;
+            $monitor->save();
+            if($votedCards->count()==5){
+                //last user voting
+                $workshop->finished=1;
+                $workshop->save();
+                return redirect(route('chooseproject',$workshop->id));
+            }
         }
-        else
-            return redirect(route('card',$workshop->id));
+
+        return redirect(route('card',$workshop->id));
     }
     public function chooseproject(Workshop $workshop){ // added
         return view('participant.chooseproject');

@@ -1,13 +1,15 @@
 @extends('layouts.editedapp')
 
 @section('content')
-
+<?php 
+use App\Workshop;
+$workshop = Workshop::find($workshop->id);?>
 @if ($workshop->finished)
 <form method="get" action="{{route('results',$workshop->id)}}">
 <input type=submit class="btn btn-success my-5" value="See Results">
 </form>
 @else
-@if ($workshop->can_vote)
+@if (auth()->user()->can_vote)
 <div class="alert my-5 alert-danger">
     <h2>Please wait until all participants finish voting !</h2>
 </div>

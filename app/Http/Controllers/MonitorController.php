@@ -20,7 +20,7 @@ class MonitorController extends Controller
         $workshop = request()->validate([
             'title' => 'string|required|max:50',
             'body' => 'required|max:500',
-            'participants' => 'integer:min:6'
+            'participants' => 'integer|min:6'
         ]);
 
         $workshop['workshop_key'] = Hash::make($workshop['title']);
@@ -38,30 +38,43 @@ class MonitorController extends Controller
        ]);
     }
     public function joindoor(Workshop $workshop){ // added
+        // Lock or open the workshop Door 
         if($workshop->locked==0){
             $workshop->locked=1;
-            session()->flash('success','Workshop Door Opened Succefully');
+            session()->flash('success','Workshop Door Closed Succefully');
          }
         else{
             $workshop->locked=0;
-            session()->flash('success','Workshop Door Closed Succefully');
+            session()->flash('success','Workshop Door Opened Succefully');
         }
         $workshop->save();
         return redirect(route('monitorworkshop',$workshop->id));
     }
     public function takecards(Workshop $workshop){ // added
+        // allow participants to submit cards
         if($workshop->locked==1){
-        $workshop->can_submit=1;
-        $workshop->save();
+        $users=$workshop->users; //array of particpants of this workshop
+        foreach($users as $user){
+            // allow ech user to submit a card when user submit his card its turned to 0 again 
+            $user->can_submit = 1;
+            $user->save();
+        }
+        // change can submit to the monitor 
+        auth()->user()->can_submit = 1;
+        auth()->user()->save();
         return view('monitor.takecards',[
             'workshop'=>$workshop
             ]);
         }
+        if($workshop->locked==1){
+            // to avoid executing several times on refresh
+            return view('monitor.takecards',[
+                'workshop'=>$workshop
+                ]);
+        }
     }
     public function takescores(Workshop $workshop){
         if($workshop->locked==1){
-        $workshop->can_submit=0;
-        $workshop->save();
         return view('monitor.takescores',[
             'workshop'=>$workshop
         ]);
@@ -69,8 +82,9 @@ class MonitorController extends Controller
     }
     public function shuffilecards(Workshop $workshop){ //added
         $workshop->voted=0;
-        $workshop->can_vote=1;
         $workshop->save();
+        auth()->user()->can_vote=1;
+        auth()->user()->save();
         $users=$workshop->users; //array of particpants of this workshop
         $cards=Card::where('workshop_id',$workshop->id)->get(); //array of votings associated to this workshop
         $takenCards=Collect(new Card);
@@ -102,7 +116,7 @@ class MonitorController extends Controller
         return redirect(route('takescores',$workshop->id));
     }
     public function results(Workshop $workshop){ //added
-        if(!$workshop->finshed)
+        if(!$workshop->finished)
             return redirect(route('takescores',$workshop->id));
         $cards=Card::where('workshop_id',$workshop->id)->orderBy('score','desc')->get();
         return view('monitor.results',[
@@ -112,7 +126,12 @@ class MonitorController extends Controller
     }
     public function chooseprojects(Workshop $workshop){ // added
         //TODO
-        return redirect(route('chooseprojects',$workshop->id));
+        $projects = request('projects');
+        $participants=$workshop->users;
+        return view('monitor.chooseprojects',[
+            'projects'=>$projects,
+            'participants'=>$participants
+        ]);
     }
 
 }

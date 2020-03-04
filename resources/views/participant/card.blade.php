@@ -1,12 +1,19 @@
 @extends('layouts.editedapp')
 @section('content')
-@if (!$workshop->can_vote)
+<?php use App\User;
+// echo $card->title;
+$monitor = User::find($workshop->user_id);
+// dd($monitor);
+?>
+{{-- {{dd($monitor->can_vote)}} --}}
+@if (!$monitor->can_vote)
 <div class="alert my-5 alert-danger">
     <h2>Please wait until recieving card !</h2>
 </div>
 @else
-@if(!Auth::user()->can_vote)
+@if(!auth()->user()->can_vote)
 <div class="alert my-5 alert-danger">
+    {{-- {{dd($monitor->can_vote)}} --}}
     <h2>Please wait until others finish voting !</h2>
 </div>
 @else

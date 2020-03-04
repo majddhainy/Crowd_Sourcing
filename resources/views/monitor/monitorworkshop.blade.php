@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.editedapp')
 
 @section('sidebar')
     
@@ -7,14 +7,23 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-10">
+            <div class="col-md-10 my-3">
                 @if (session()->has('success'))
                     <div class="alert alert-success">
                         {{ session()->get('success')}}
                     </div>
                 @endif
-                <div class="card">
-                    <div class="card-header">Participants joined until now</div>
+                <div class="card my-3">
+                            <div class="card-body">
+                                <h4 class="card-title">Workshop Key :</h4>
+                                <input disabled = "disabled" type="text" id="key" class="form-control" value=" {{$workshop->workshop_key}} " >
+                                <div class="mt-3"> 
+                                    <button id="copybtn" onclick="copy()" type="button" class="btn btn-primary" >Copy</button>
+                                </div>
+                            </div>
+                </div>
+                <div class="card my-5">
+                    <div class="card-header"> <h4> Participants joined until now </h4></div>
                     <div class="card-body">
                         @if($users->count()==0)
                         <h3 class="text text-center">No Participants Yet</h3>
@@ -66,4 +75,20 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script> 
+function copy() {
+    btn = document.getElementById('copybtn')
+    key = document.getElementById('key');
+    keyv = key.value;
+    key.disabled = false;
+    key.select();
+    document.execCommand('copy');
+    key.disabled = true;
+
+    
+    }
+</script>
 @endsection

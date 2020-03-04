@@ -19,7 +19,7 @@ class CreateWorkshopsTable extends Migration
             $table->text('body');
             $table->string('workshop_key');
             $table->boolean('locked')->default(0);
-            $table->boolean('finshed')->default(0);
+            $table->boolean('finished')->default(0);
             $table->integer('participants');
             $table->integer('participated')->default(0);
             $table->integer('voted')->default(0);
