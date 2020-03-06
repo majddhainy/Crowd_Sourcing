@@ -74,6 +74,26 @@
             @yield('content')
         </center>
     </div>
+    {{-- now subscribe for channels --}}
+    @auth
+    <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
+
+    {{-- check if participant to subscribe him for channel specific to the workshop to receive notifications from monitor --}}
+    @if(auth()->user()->role==2){
+        <script>
+            var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+            var channel = pusher.subscribe('participants'+{!! json_encode($workshop->id) !!});
+            channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
+        </script>
+    @else
+    {{-- else, monitor, subscribe him for channel specific to his workshop to recieve notification from participants --}}
+    <script>
+        var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+        var channel = pusher.subscribe('monitor'+{!! json_encode($workshop->id) !!});
+        channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
+    </script>
+    @endif
+    @endauth
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body></html>

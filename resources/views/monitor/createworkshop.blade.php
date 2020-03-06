@@ -6,9 +6,9 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 
-                @if(session()->has('message'))
+                @if(session()->has('errors'))
                         <div class="alert alert-danger">
-                            {{ session()->get('message') }}
+                            {{ session()->get('errors')->first() }}
                         </div>
                 @endif
 
