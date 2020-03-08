@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Card extends Model
 {
     protected $fillable = [
-        'title', 'body', 'score','workshop_id','user_id'
+        'title', 'body', 'score','workshop_id','user_id' , 'takenAsProject'
     ];
 
     public function workshops(){
@@ -16,5 +16,8 @@ class Card extends Model
 
     public function voting(){
         return $this->hasOne(Voting::class);
+    }
+    public function members(){
+        return $this->belongsToMany('App\User','projects');
     }
 }

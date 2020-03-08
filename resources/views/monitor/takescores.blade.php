@@ -1,9 +1,7 @@
-@extends('layouts.editedapp')
+@extends('layouts.app')
 
 @section('content')
-<?php 
-use App\Workshop;
-$workshop = Workshop::find($workshop->id);?>
+<center>
 @if ($workshop->finished)
 <form method="get" action="{{route('results',$workshop->id)}}">
 <input type=submit class="btn btn-success my-5" value="See Results">
@@ -21,4 +19,5 @@ $workshop = Workshop::find($workshop->id);?>
 </form>
 @endif
 @endif
+</center>
 @endsection

@@ -5,12 +5,13 @@ use App\Workshop;
 use App\Card;
 use App\Voting;
 use Illuminate\Http\Request;
+use App\Project;
 use Illuminate\Support\Facades\Hash;
 
 class MonitorController extends Controller
 {
     public function __construct(){
-        $this->middleware('monitorplus')->only(['monitorworkshop','joindoor','takecards','takescores','shuffilecards','results','chooseprojects']);
+        $this->middleware('monitorplus')->only(['monitorworkshop','joindoor','takecards','takescores','shuffilecards','results','chooseproject']);
     }
     public function createworkshop() {
         return view('monitor.createworkshop');
@@ -129,15 +130,52 @@ class MonitorController extends Controller
             'workshop'=>$workshop
         ]);
     }
-    public function chooseprojects(Workshop $workshop){ 
+    public function chooseproject(Workshop $workshop,Card $card){ 
         // TODO and check weather canvote cansubmit and locked and finished all equal to 0 ??
         //when finished giving projects to participants we need to notify them
-        $projects = request('projects');
+        //$projects = request('projects');
+        $cards=Card::where('workshop_id',$workshop->id)->orderBy('score','desc')->get();
         $participants=$workshop->users;
-        return view('monitor.chooseprojects',[
-            'projects'=>$projects,
-            'participants'=>$participants
+        $projects=$workshop->projects;
+       
+       $participants=$participants->keyBy('id');
+       //dd($participants);
+        foreach ($projects as $project){
+            $participants->forget($project->user_id);
+        }
+        $projectMembers = $card->members;
+       // dd($projectMembers);
+        if($participants->count() == 0){
+            event(new \App\Events\MyEvent('You are inside a project now !','participants'.$workshop->id));
+        }
+        return view('monitor.results',[
+            'project'=>$card,
+            'cards'=>$cards,
+            'workshop'=>$workshop,
+            'participants'=>$participants,
+            'members' => $projectMembers
         ]);
+    }
+
+    public function addmembers(Workshop $workshop ,Card $card){
+        $members = request('members');
+        Project::where('card_id',$card->id)->delete();
+        if($members){
+            $card->takenAsProject=1;
+            $card->save();
+            foreach ($members as $member){
+                Project::create([ 
+                    'user_id'=>$member,
+                    'card_id'=>$card->id,
+                    'workshop_id'=>$workshop->id
+                ]);
+            }
+        }
+        else{
+            $card->takenAsProject=0;
+            $card->save();
+        }
+        return redirect(route('results',$workshop->id));
     }
 
 }

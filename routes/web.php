@@ -51,10 +51,11 @@ Route::middleware(['auth','monitor'])->group(function() {
     Route::put('/home/monitorworkshop/{workshop}/takescores','MonitorController@shuffilecards')->name('shuffilecards'); //added 
     
     Route::get('/home/monitorworkshop/{workshop}/results','MonitorController@results')->name('results'); // added
-    Route::post('/home/monitorworkshop/{workshop}/results','MonitorController@chooseprojects')->name('chooseprojects'); // added
+    //Route::post('/home/monitorworkshop/{workshop}/results','MonitorController@chooseprojects')->name('chooseprojects'); // added
+    Route::get('/home/monitorworkshop/{workshop}/results/chooseproject/{card}','MonitorController@chooseproject')->name('chooseproject'); // added
+    Route::post('/home/monitorworkshop/{workshop}/results/chooseproject/{card}','MonitorController@addmembers')->name('addmembers'); // added
     
 });
-
 
 
 // only Participant 
@@ -65,5 +66,5 @@ Route::middleware(['auth','participant'])->group(function() {
     Route::post('/home/createcard/{workshop}','ParticipantController@storecard')->name('storecard'); // added
     Route::get('/home/participantworkshop/{workshop}/card','ParticipantController@card')->name('card'); // added
     Route::put('/home/participantworkshop/{workshop}/votecard','ParticipantController@votecard')->name('votecard'); // added
-    Route::get('/home/participantworkshop/{workshop}/chooseproject','ParticipantController@chooseproject')->name('chooseproject'); // added
+   // Route::get('/home/participantworkshop/{workshop}/chooseproject','ParticipantController@chooseproject')->name('chooseproject'); // added
 });

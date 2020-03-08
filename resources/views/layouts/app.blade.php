@@ -50,6 +50,19 @@
                                 </li>
                             @endif
                         @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
+                        </li>
+                        @if(auth()->user()->isMonitor())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('createworkshop')}}">{{ __('CreateWorkshop') }}</a>
+                        </li>
+                        @endif
+                        @if(auth()->user()->isParticipant())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('joinworkshop')}}">{{ __('JoinWorkshop') }}</a>
+                        </li>
+                        @endif
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -74,39 +87,37 @@
         </nav>
 
         <main class="py-4">
-            @section('sidebar'){{-- added section for admin to not extend it --}}
-            @auth
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <a href="">Posts</a>
-                                </li>
-                                <li class="list-group-item">
-                                    <a href="">Categories</a>
-                                </li>
-                                <li class="list-group-item">
-                                    <a href="">Tags</a>
-                                </li>
-                            </ul>
-                            
-                        </div>
-                        @show
-                        
-        
-                        <div class="col-md-8">
+               <div class="col-md-12">
                             
                             @yield('content')
                         </div>
         
                     </div>
                 </div>
-            @else 
-                @yield('content')
-            @endauth
+
         </main>
     </div>
+    @auth
+    @if(isset($workshop))
+    <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
+    {{-- check if participant to subscribe him for channel specific to the workshop to receive notifications from monitor --}}
+    @if(auth()->user()->isParticipant())
+        <script>
+            var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+            var channel = pusher.subscribe('participants'+{!! json_encode($workshop->id) !!});
+            channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
+        </script>
+    @endif
+    {{-- else, monitor, subscribe him for channel specific to his workshop to recieve notification from participants --}}
+    @if(auth()->user()->isMonitor())
+    <script>
+        var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+        var channel = pusher.subscribe('monitor'+{!! json_encode($workshop->id) !!});
+        channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
+    </script>
+    @endif
+    @endif
+    @endauth
 
     <script src="{{ asset('js/app.js') }}"></script>
     {{-- for additional javascript --}}

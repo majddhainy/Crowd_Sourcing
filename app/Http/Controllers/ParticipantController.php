@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class ParticipantController extends Controller
 {
     public function __construct(){
-        $this->middleware('participantplus')->only(['createcard','storecard','card','votecard','chooseproject']);
+        $this->middleware('participantplus')->only(['createcard','storecard','card','votecard']);
     }
     public function joinworkshop(){
         return view('participant.joinworkshop');
@@ -100,12 +100,9 @@ class ParticipantController extends Controller
                 $workshop->save();
                 //now inform all participants that workshop is finished and wait for distributing projects
                 event(new \App\Events\MyEvent('Workshop finished, please wait untill getting your project','participants'.$workshop->id));
-                return redirect(route('chooseproject',$workshop->id)); //here instead, must redirect to page to display the project he will take
+                return redirect(route('home')); 
             }
         }
         return redirect(route('card',$workshop->id));
-    }
-    public function chooseproject(Workshop $workshop){ // added, TO BE REMOVED
-        return view('participant.chooseproject');
     }
 }

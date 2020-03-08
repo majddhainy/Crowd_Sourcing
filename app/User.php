@@ -42,6 +42,9 @@ class User extends Authenticatable
     public function workshops(){
         return $this->hasMany(Workshop::class);
     }
+    public function pWorkshops(){
+        return $this->belongsToMany('App\Workshop','cards'); //many to many
+    }
     
     public function votings(){
             return $this->belongsToMany('App\Cards','votings');

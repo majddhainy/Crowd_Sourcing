@@ -11,12 +11,15 @@ class Workshop extends Model
   ];
   
    public function users(){
-      return $this->belongsToMany('App\User','cards');
+      return $this->belongsToMany('App\User','cards'); //many to many
   }
 
   public function user(){
      return $this->belongsTo('App\User');
   }
+  public function projects(){
+   return $this->hasMany('App\Project');
+}
 
    // public function cards(){
    //    return $this->belongsToMany('App\cards','votings');

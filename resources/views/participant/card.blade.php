@@ -1,4 +1,4 @@
-@extends('layouts.editedapp')
+@extends('layouts.app')
 @section('content')
 <?php use App\User;
 // echo $card->title;

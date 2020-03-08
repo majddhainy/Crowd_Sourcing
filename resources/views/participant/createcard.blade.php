@@ -1,4 +1,4 @@
-@extends('layouts.editedapp')
+@extends('layouts.app')
 @section('content')
 <div class="card" style="margin-top:3%;margin-left:15%;margin-right:15%">
     <div class="card-header">Workshop Details</div>

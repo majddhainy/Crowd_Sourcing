@@ -20,6 +20,7 @@ class CreateCardsTable extends Migration
             $table->integer('score')->default(0);
             $table->integer('workshop_id');
             $table->integer('user_id');
+            $table->boolean('takenAsProject')->default(0);
             $table->timestamps();
         });
     }
