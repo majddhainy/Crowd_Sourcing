@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Workshop extends Model
 {
    protected $fillable = [
-      'title', 'body', 'workshop_key', 'user_id' , 'participants','participated','voted','locked',
+      'title', 'body', 'workshop_key', 'user_id' , 'participants','participated','voted','locked','stage'
   ];
   
    public function users(){

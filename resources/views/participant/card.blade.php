@@ -12,8 +12,8 @@
 </div>
 @else
 <div class="card" style="margin-top:3%;margin-left:15%;margin-right:15%">
-    <div class="card-header bg-light">Card Details</div>
-        <div class="card-body bg-white">
+    <div class="card-header">Card Details</div>
+        <div class="card-body">
             <div class="form-group">
             <input name="title" type="text" class="form-control" value="{{$card->title}}" readonly>
             </div>
@@ -23,8 +23,8 @@
         </div>
     </div>
 <div class="card" style="margin:3%;margin-left:15%;margin-right:15%">
-    <div class="card-header bg-light">Rate This Suggestion</div>
-        <div class="card-body bg-white">
+    <div class="card-header">Rate This Suggestion</div>
+        <div class="card-body">
         <form method="post" action="{{route('votecard',$workshop->id)}}">
                 @method('put')
                 @csrf

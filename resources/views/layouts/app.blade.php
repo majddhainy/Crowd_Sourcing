@@ -84,47 +84,15 @@
             </div>
         </nav>
 
-        <main class="py-2">
-               <div class="col-md-12">
-                            @yield('content')
-                        </div>
-        
-                    </div>
-                </div>
-
+        <main class="py-2 pb-5">
+            <div class="col-md-12 text-center pb-5">
+                @yield('content')
+            </div>
         </main>
     </div>
-    @auth
-    @if(isset($workshop))
-    <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
-    @if(auth()->user()->isParticipant())
-        <script>
-            // subscribe participants to channel specific to the workshop to receive notifications from monitor
-            var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
-            var channel = pusher.subscribe('participants'+{!! json_encode($workshop->id) !!});
-            channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
-            // subscribe each participant to private channel of his own id to receive notifications related to his projects(groups)
-            var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
-            var channel = pusher.subscribe('participant'+{!! json_encode(auth()->user()->id) !!});
-            channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
-        </script>
-    @endif
-    @if(auth()->user()->isMonitor())
-    <script>
-        // subscribe monitor to channel specific to his workshop to recieve notification from participants
-        var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
-        var channel = pusher.subscribe('monitor'+{!! json_encode($workshop->id) !!});
-        channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
-    </script>
-    @endif
-    @endif
-    @endauth
 
-    <script src="{{ asset('js/app.js') }}"></script>
-    {{-- for additional javascript --}}
-    @yield('scripts')
-<br>
-<footer class="footer bg-secondary pt-3 p-0" style="position: absolute;bottom:0;width: 100%">
+<br><br>
+<footer class="footer bg-secondary pt-1 p-0" style="position:absolute;bottom:0;width:100%">
     <div class="container text-center">
       <div class="row justify-content-center">
         <div class="col-md-6 mt-md-0 mt-3">
@@ -138,5 +106,33 @@
       All rights reserved...
     </div>
 </footer>
+@auth
+@if(isset($workshop))
+<script src="https://js.pusher.com/5.1/pusher.min.js"></script>
+@if(auth()->user()->isParticipant())
+    <script>
+        // subscribe participants to channel specific to the workshop to receive notifications from monitor
+        var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+        var channel = pusher.subscribe('participants'+{!! json_encode($workshop->id) !!});
+        channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+        // subscribe each participant to private channel of his own id to receive notifications related to his projects(groups)
+        var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+        var channel = pusher.subscribe('participant'+{!! json_encode(auth()->user()->id) !!});
+        channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+    </script>
+@endif
+@if(auth()->user()->isMonitor())
+<script>
+    // subscribe monitor to channel specific to his workshop to recieve notification from participants
+    var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
+    var channel = pusher.subscribe('monitor'+{!! json_encode($workshop->id) !!});
+    channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+</script>
+@endif
+@endif
+@endauth
+<script src="{{ asset('js/app.js') }}"></script>
+{{-- for additional javascript --}}
+@yield('scripts')
 </body>
 </html>

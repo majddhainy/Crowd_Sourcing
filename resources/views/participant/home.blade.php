@@ -42,7 +42,11 @@
                                                     {{ $workshop->created_at }}
                                                 </td>
                                                 <td class="white-space: nowrap">
-                                                <a href="{{route('group',$workshop->id)}}" class="btn btn-primary">View Project</a>
+                                                    @if($workshop->stage==3)
+                                                        <a href="{{route('group',$workshop->id)}}" class="btn btn-primary">View Project</a>
+                                                    @else
+                                                        <a href="{{route('group',$workshop->id)}}" class="btn btn-warning text-white">Continue Where You Left</a>
+                                                    @endif
                                                 </td> 
                                             </tr>
                                         <?php $i++; ?>

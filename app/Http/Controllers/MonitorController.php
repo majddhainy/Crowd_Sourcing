@@ -26,20 +26,25 @@ class MonitorController extends Controller
 
         $workshop['workshop_key'] = Hash::make($workshop['title']);
         $workshop['user_id'] = auth()->user()->id;
-        
         $workshop = Workshop::create($workshop);
 
+        Auth::user()->can_submit=0;
+        Auth::user()->can_vote=0;
+        Auth::user()->save();
         session()->flash('success','Workshop Created Successfuly');
         return redirect(route('monitorworkshop' , $workshop->id));
     }
-    public function monitorworkshop(Workshop $workshop) { 
+    public function monitorworkshop(Workshop $workshop) {
+        if($workshop->stage!=0)
+            return redirect(route('takecards', $workshop->id));
         return view('monitor.monitorworkshop',[
             'users'=>$workshop->users,
             'workshop'=>$workshop
        ]);
     }
-    public function joindoor(Workshop $workshop){ 
-        // Lock or open the workshop Door 
+    public function joindoor(Workshop $workshop){ // Lock/open the workshop Door 
+        if($workshop->stage!=0)
+            return redirect(route('takecards', $workshop->id));
         if($workshop->locked==0){
             $workshop->locked=1;
             session()->flash('success','Workshop Door Closed Succefully');
@@ -52,33 +57,37 @@ class MonitorController extends Controller
         return redirect(route('monitorworkshop',$workshop->id));
     }
     public function takecards(Workshop $workshop){
-        // allow participants to submit cards
-        if($workshop->locked==1){
-        $users=$workshop->users; //collection of particpants of this workshop
-        foreach($users as $user){
-            // allow ech user to submit a card when user submit his card its turned to 0 again 
-            $user->can_submit = 1;
-            $user->save();
+        if($workshop->stage==0 && $workshop->locked==1){
+            $users=$workshop->users; //collection of particpants of this workshop
+            foreach($users as $user){
+                // allow ech user to submit a card when user submit his card its turned to 0 again 
+                $user->can_submit = 1;
+                $user->save();
+            }
+            // change can submit to the monitor 
+            auth()->user()->can_submit = 1;
+            auth()->user()->save();
+            // notify each participant to submit his card
+            event(new \App\Events\MyEvent('Workshop started, submit your card','participants'.$workshop->id));
+            $workshop->stage=1;
+            $workshop->save();
         }
-        // change can submit to the monitor 
-        auth()->user()->can_submit = 1;
-        auth()->user()->save();
-        // notify each participant to submit his card
-        event(new \App\Events\MyEvent('Workshop started, submit your card','participants'.$workshop->id));
+        if($workshop->stage!=1)
+            return redirect(route('takescores', $workshop->id));
         return view('monitor.takecards',[
             'workshop'=>$workshop
             ]);
-        }
     }
     public function takescores(Workshop $workshop){
-        if($workshop->locked==1){
+        if($workshop->stage!=2)
+            return redirect(route('results', $workshop->id));
         return view('monitor.takescores',[
             'workshop'=>$workshop
         ]);
-        }
     }
     public function shuffilecards(Workshop $workshop){ 
-        // TODO add condtition for can_submit=0 and locked==1 ??
+        if($workshop->stage!=2)
+            return redirect(route('results', $workshop->id));
         $workshop->voted=0;
         $workshop->save();
         auth()->user()->can_vote=1;
@@ -116,8 +125,8 @@ class MonitorController extends Controller
         return redirect(route('takescores',$workshop->id));
     }
     public function results(Workshop $workshop){
-        if(!$workshop->finished)
-            return redirect(route('takescores',$workshop->id));
+        if($workshop->stage!=3)
+            return redirect(route('monitorworkshop', $workshop->id));
         $cards=Card::where('workshop_id',$workshop->id)->orderBy('score','desc')->get();
         return view('monitor.results',[
             'cards'=>$cards,
@@ -125,9 +134,8 @@ class MonitorController extends Controller
         ]);
     }
     public function chooseproject(Workshop $workshop,Card $card){ 
-        // TODO and check weather canvote cansubmit and locked and finished all equal to 0 ??
-        //when finished giving projects to participants we need to notify them
-        //$projects = request('projects');
+        if($workshop->stage!=3)
+            return redirect(route('monitorworkshop', $workshop->id));
         $cards=Card::where('workshop_id',$workshop->id)->orderBy('score','desc')->get();
         $participants=$workshop->users;
         $projects=$workshop->projects;
@@ -149,6 +157,8 @@ class MonitorController extends Controller
     }
 
     public function addmembers(Workshop $workshop ,Card $card){
+        if($workshop->stage!=3)
+            return redirect(route('monitorworkshop', $workshop->id));
         $members = request('members');
         Project::where('card_id',$card->id)->delete();
         $card->takenAsProject=0;
