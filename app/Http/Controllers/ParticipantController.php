@@ -7,12 +7,13 @@ use App\Workshop;
 use App\Card;
 use App\Voting;
 use App\User;
+use App\Project;
 use Illuminate\Support\Facades\Auth;
 
 class ParticipantController extends Controller
 {
     public function __construct(){
-        $this->middleware('participantplus')->only(['createcard','storecard','card','votecard']);
+        $this->middleware('participantplus')->only(['createcard','storecard','card','votecard','group']);
     }
     public function joinworkshop(){
         return view('participant.joinworkshop');
@@ -65,6 +66,8 @@ class ParticipantController extends Controller
         return redirect(route('card' , $workshop->id));
     }
     public function card(Workshop $workshop){
+        if($workshop->finished==1) // this case is when the rest of participants reloads the page AND after the last participant voted for the fifth time
+            return redirect(route('group',$workshop->id));
         $votedCards=Voting::where([['user_id',Auth::user()->id],['workshop_id',$workshop->id]])->get();
         if($voteCard=$votedCards->last())
             $card=Card::where('id',$voteCard->card_id)->first(); // this is the card to be voted
@@ -72,7 +75,8 @@ class ParticipantController extends Controller
             $card =null;
         return view('participant.card',[
             'workshop'=>$workshop,
-            'card'=>$card
+            'card'=>$card,
+            'monitor'=>$workshop->user
         ]);
     }
     public function votecard(Workshop $workshop){
@@ -100,9 +104,24 @@ class ParticipantController extends Controller
                 $workshop->save();
                 //now inform all participants that workshop is finished and wait for distributing projects
                 event(new \App\Events\MyEvent('Workshop finished, please wait untill getting your project','participants'.$workshop->id));
-                return redirect(route('home')); 
+                return redirect(route('group',$workshop->id)); 
             }
         }
         return redirect(route('card',$workshop->id));
+    }
+    public function group(Workshop $workshop){
+        $project=Project::where([['workshop_id',$workshop->id],['user_id',Auth::user()->id]])->first();
+        $card=null;
+        $members=null;
+        if($project){
+            $card=Card::where('id',$project->card_id)->first();
+            $members=$card->members;
+            $members=$members->keyBy('id');
+            $members->forget(Auth::user()->id);
+        }
+        return view('participant.group',[
+            'members'=>$members,
+            'card'=>$card
+        ]);
     }
 }

@@ -1,11 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<?php use App\User;
-// echo $card->title;
-$monitor = User::find($workshop->user_id);
-// dd($monitor);
-?>
-{{-- {{dd($monitor->can_vote)}} --}}
+<center>
 @if (!$monitor->can_vote)
 <div class="alert my-5 alert-danger">
     <h2>Please wait until recieving card !</h2>
@@ -13,13 +8,12 @@ $monitor = User::find($workshop->user_id);
 @else
 @if(!auth()->user()->can_vote)
 <div class="alert my-5 alert-danger">
-    {{-- {{dd($monitor->can_vote)}} --}}
     <h2>Please wait until others finish voting !</h2>
 </div>
 @else
 <div class="card" style="margin-top:3%;margin-left:15%;margin-right:15%">
-    <div class="card-header">Card Details</div>
-        <div class="card-body">
+    <div class="card-header bg-light">Card Details</div>
+        <div class="card-body bg-white">
             <div class="form-group">
             <input name="title" type="text" class="form-control" value="{{$card->title}}" readonly>
             </div>
@@ -29,8 +23,8 @@ $monitor = User::find($workshop->user_id);
         </div>
     </div>
 <div class="card" style="margin:3%;margin-left:15%;margin-right:15%">
-    <div class="card-header">Rate This Suggestion</div>
-        <div class="card-body">
+    <div class="card-header bg-light">Rate This Suggestion</div>
+        <div class="card-body bg-white">
         <form method="post" action="{{route('votecard',$workshop->id)}}">
                 @method('put')
                 @csrf
@@ -44,4 +38,5 @@ $monitor = User::find($workshop->user_id);
     </div>
 @endif
 @endif
+</center>
 @endsection

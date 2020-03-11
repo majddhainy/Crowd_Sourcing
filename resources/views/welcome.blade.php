@@ -9,7 +9,7 @@
 
 <br>
 
-<img src="https://theivanovosti.files.wordpress.com/2017/03/eqb0011-blogphoto_0225_original-1024x547.jpg" width="600" height="300" />
+<img src="{{asset('crowd-sourcing.jpg')}}" width="700" height="350" />
 
 </div>
 </center>

@@ -54,7 +54,7 @@ class MonitorController extends Controller
     public function takecards(Workshop $workshop){
         // allow participants to submit cards
         if($workshop->locked==1){
-        $users=$workshop->users; //array of particpants of this workshop
+        $users=$workshop->users; //collection of particpants of this workshop
         foreach($users as $user){
             // allow ech user to submit a card when user submit his card its turned to 0 again 
             $user->can_submit = 1;
@@ -68,12 +68,6 @@ class MonitorController extends Controller
         return view('monitor.takecards',[
             'workshop'=>$workshop
             ]);
-        }
-        if($workshop->locked==1){ // MAJD HAYDE SHO DEENAA???
-            // to avoid executing several times on refresh
-            return view('monitor.takecards',[
-                'workshop'=>$workshop
-                ]);
         }
     }
     public function takescores(Workshop $workshop){
@@ -89,7 +83,7 @@ class MonitorController extends Controller
         $workshop->save();
         auth()->user()->can_vote=1;
         auth()->user()->save();
-        $users=$workshop->users; //array of particpants of this workshop
+        $users=$workshop->users; //collection of particpants of this workshop
         $cards=Card::where('workshop_id',$workshop->id)->get(); // collection of cards associated to this workshop
         $takenCards=Collect(new Card);
         $currentVotes=(Collect(new Voting))->values();
@@ -138,16 +132,13 @@ class MonitorController extends Controller
         $participants=$workshop->users;
         $projects=$workshop->projects;
        
-       $participants=$participants->keyBy('id');
-       //dd($participants);
+        $participants=$participants->keyBy('id');
+
         foreach ($projects as $project){
             $participants->forget($project->user_id);
         }
         $projectMembers = $card->members;
-       // dd($projectMembers);
-        if($participants->count() == 0){
-            event(new \App\Events\MyEvent('You are inside a project now !','participants'.$workshop->id));
-        }
+
         return view('monitor.results',[
             'project'=>$card,
             'cards'=>$cards,
@@ -160,21 +151,20 @@ class MonitorController extends Controller
     public function addmembers(Workshop $workshop ,Card $card){
         $members = request('members');
         Project::where('card_id',$card->id)->delete();
-        if($members){
+        $card->takenAsProject=0;
+        if($members){ // card taken as project, associate the project with its members(participants) in the projects table
             $card->takenAsProject=1;
-            $card->save();
             foreach ($members as $member){
                 Project::create([ 
                     'user_id'=>$member,
                     'card_id'=>$card->id,
                     'workshop_id'=>$workshop->id
                 ]);
+                // inform all members to check their projects
+                event(new \App\Events\MyEvent('You are in a group now, check your project','participant'.$member));
             }
         }
-        else{
-            $card->takenAsProject=0;
-            $card->save();
-        }
+        $card->save();
         return redirect(route('results',$workshop->id));
     }
 

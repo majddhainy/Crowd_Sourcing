@@ -23,8 +23,6 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-
-
     public function store() {
         $user = request()->validate([
         'name' => 'required|string',
@@ -39,13 +37,11 @@ class AuthController extends Controller
         else 
             $user['confirmed'] = 0;
         User::create($user);
-
         return redirect('/login');
     }
 
 
     public function postlogin(){
-
         $account=request()->validate([
             'email' => 'required|email',
             'password' => 'required|string',
@@ -56,11 +52,9 @@ class AuthController extends Controller
             return view('auth.login')->with('error' , 'Account not found !');
         }
 
-
         if( ! Hash::check($account['password'],$user->password)){
             return view('auth.login')->with('error' , 'Wrong Password !');
         }
-
         
         if(!$user->confirmed){
             return view('auth.login')->with('error' , 'You are not confirmed yet , Please contact the Administrator !');
@@ -73,9 +67,7 @@ class AuthController extends Controller
 
     }
 
-
     public function index(){
-            
         $allusers = User::all();
             switch(Auth::user()->role){
                 case 0: return view('admin.home')->with('users',$allusers);
@@ -83,21 +75,10 @@ class AuthController extends Controller
                 case 2: return view('participant.home');
                 default : return view(route('home'));
             }
-
     }
-
-
 
     public function logout(){
             Auth::logout();
             return redirect(route('welcome'));
     }
-
-
-
-    
-
-
-
-
 }

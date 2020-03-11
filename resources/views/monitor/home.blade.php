@@ -16,7 +16,6 @@
             @endif
             <div class="card">
                 <div class="card-header">Workshops</div>
-                     {{-- {{ dd(auth()->user()->workshops )}} --}}
                      <?php $allworkshops = auth()->user()->workshops ?>
                     <div class="card-body">
                         @if(auth()->user()->workshops->count() == 0) 
@@ -42,26 +41,18 @@
                                                 <td>
                                                     {{ $workshop->created_at }}
                                                 </td>
-                                                {{-- since post method is defined in category model and reurns a relation ship VERY IMPORTANT --}}
-                                                {{-- Note Call name only not function with () because if u need to do query use () --}}
                                                 <td class="white-space: nowrap">
-                                                <a href="{{route('results',$workshop->id)}}" class="btn btn-primary">View Projects</a>
+                                                <a href="{{route('results',$workshop->id)}}" class="btn btn-primary">Manage Projects</a>
                                                 </td> 
                                             </tr>
                                         <?php $i++; ?>
                                         @endforeach
-
                                     </tbody>
                             </table>
                         @endif
                     </div>
             </div>
-
-        
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
 @endsection

@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@section('sidebar')
-    
-@endsection
-{{-- added view --}}
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -20,7 +16,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th> 
-                                    <th scope="col">Card </th>
+                                    <th scope="col">Card Title</th>
                                     <th scope="col">Total Score</th>
                                     <th></th>
                                 </tr>
@@ -33,12 +29,11 @@
                                         <th> {{ $i  }} </th>
                                         <td>  {{ $card->title }}  </td>
                                         <td>{{ $card->score }}  </td>
-                                        {{-- <td><input type="checkbox" name="projects[]" value="{{$card->id}}"> </td> --}}
                                         @if ($card->takenAsProject)
                                             <td> <a href="{{route('chooseproject',[$workshop->id,$card->id])}}" class="btn btn-info"> <font color='white'> Edit </font></a> </td>
                                         @else
-                                    <td>  <a href="{{route('chooseproject',[$workshop->id,$card->id])}}" class="btn btn-secondary">  Take As Project </a></td>
-                                    @endif
+                                        <td>  <a href="{{route('chooseproject',[$workshop->id,$card->id])}}" class="btn btn-secondary">  Take As Project </a></td>
+                                        @endif
                                     </tr>
                                     <?php $i++ ?>
                                 @endforeach
@@ -86,8 +81,6 @@
                                     <th> {{ $i  }} </th>
                                     <td>  {{ $member->name }}  </td>
                                     <td>  <input type="checkbox" name="members[]" value="{{$member->id}}" checked>  </td>
-                                    {{-- <td><input type="checkbox" name="projects[]" value="{{$card->id}}"> </td> --}}
-                                    
                                 </tr>
                                 <?php $i++ ?>
                             @endforeach
@@ -97,8 +90,6 @@
                                         <th> {{ $i  }} </th>
                                         <td>  {{ $participant->name }}  </td>
                                         <td>  <input type="checkbox" name="members[]" value="{{$participant->id}}">  </td>
-                                        {{-- <td><input type="checkbox" name="projects[]" value="{{$card->id}}"> </td> --}}
-                                        
                                     </tr>
                                     <?php $i++ ?>
                                 @endforeach
@@ -115,14 +106,9 @@
                     <div class="card">
                         <div class="card-header">Choose card to view available participants</div>
                         <div class="card-body">
-                           
                         </div>
-                   
-                       
                     </div> 
             @endif
-            
-                 
             </div>
         </div>
     </div>
