@@ -25,10 +25,6 @@ class MonitorHasWorkshop
             return redirect(route('home'))->with('message','Are You Playing ?');
         }
         
-        // if($workshop->locked==1 && $workshop->can_submit==1)
-        //     return redirect(route('takecards',$id));
-        // if($workshop->locked==0)
-        //     return redirect(route('monitorworkshop',$id));
         return $next($request);
     }
 }

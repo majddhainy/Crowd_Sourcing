@@ -114,11 +114,11 @@
         // subscribe participants to channel specific to the workshop to receive notifications from monitor
         var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
         var channel = pusher.subscribe('participants'+{!! json_encode($workshop->id) !!});
-        channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+        channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
         // subscribe each participant to private channel of his own id to receive notifications related to his projects(groups)
         var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
         var channel = pusher.subscribe('participant'+{!! json_encode(auth()->user()->id) !!});
-        channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+        channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
     </script>
 @endif
 @if(auth()->user()->isMonitor())
@@ -126,7 +126,7 @@
     // subscribe monitor to channel specific to his workshop to recieve notification from participants
     var pusher = new Pusher('1da76367e337a252dc04', {cluster: 'mt1'});
     var channel = pusher.subscribe('monitor'+{!! json_encode($workshop->id) !!});
-    channel.bind('my-event', function(data) {if(confirm(JSON.stringify(data)))location.reload(true);});
+    channel.bind('my-event', function(data) {alert(JSON.stringify(data));});
 </script>
 @endif
 @endif

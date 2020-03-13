@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-<center>
 @if (!$monitor->can_vote)
 <div class="alert my-5 alert-danger">
     <h2>Please wait until recieving card !</h2>
@@ -38,5 +37,4 @@
     </div>
 @endif
 @endif
-</center>
 @endsection

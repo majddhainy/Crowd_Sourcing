@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Project;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Auth;
+
 class MonitorController extends Controller
 {
     public function __construct(){

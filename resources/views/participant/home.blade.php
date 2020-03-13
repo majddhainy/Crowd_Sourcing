@@ -32,20 +32,20 @@
                                     </thead>
                                     <tbody>
                                         <?php $i=1; ?>
-                                        @foreach ($allworkshops as $workshop)
+                                        @foreach ($allworkshops as $wp)
                                             <tr>
                                                 <th> {{ $i  }} </th>
                                                 <td>
-                                                    {{ $workshop->title }}
+                                                    {{ $wp->title }}
                                                 </td>
                                                 <td>
-                                                    {{ $workshop->created_at }}
+                                                    {{ $wp->created_at }}
                                                 </td>
                                                 <td class="white-space: nowrap">
-                                                    @if($workshop->stage==3)
-                                                        <a href="{{route('group',$workshop->id)}}" class="btn btn-primary">View Project</a>
+                                                    @if($wp->stage==3)
+                                                        <a href="{{route('group',$wp->id)}}" class="btn btn-primary">View Project</a>
                                                     @else
-                                                        <a href="{{route('group',$workshop->id)}}" class="btn btn-warning text-white">Continue Where You Left</a>
+                                                        <a href="{{route('group',$wp->id)}}" class="btn btn-warning text-white">Continue Where You Left</a>
                                                     @endif
                                                 </td> 
                                             </tr>

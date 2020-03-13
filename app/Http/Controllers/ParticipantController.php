@@ -25,7 +25,7 @@ class ParticipantController extends Controller
             return redirect(route('joinworkshop'));
         }
         //check for existing card to prevent him from participating more than once
-        $card=Card::where([['user_id',Auth::user()->id],['workshop_id',$workshop->id]]);
+        $card=Card::where([['user_id',Auth::user()->id],['workshop_id',$workshop->id]])->first();
         if($card){
             session()->flash('message','You have joined this workshop before');
             return redirect(route('joinworkshop'));
